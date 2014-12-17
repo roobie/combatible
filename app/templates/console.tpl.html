@@ -1,0 +1,61 @@
+<div id="br-console">
+    <label for="">
+        <input name="show_dead"
+               ng-model="model.show_dead"
+               type="checkbox"/>
+        Show dead
+    </label>
+    <span>Count:
+        <pre>{{get_not_dead().length}}/{{model.entities.length}}</pre></span>
+    <table class="table table-hover table-striped">
+        <thead>
+            <tr>
+                <th>ID/POS</th>
+                <th>HP</th>
+                <th>Need/Status</th>
+                <th>Needs</th>
+                <th>Coeff</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr ng-repeat="e in model.entities"
+                ng-if="model.show_dead || !e.is_dead"
+                ng-mouseover="on_mouseover(e)"
+                ng-mouseout="on_mouseout(e)"
+                ng-class="{ 'success': e.race === 'human',
+                            'danger': e.race === 'orch' }">
+                <td>
+                    <pre>{{e.sex}} : {{e.$hash}}</pre>
+                    <pre>({{e.position.x}}, {{e.position.y}})</pre>
+                </td>
+                <td>
+                    <span ng-if="e.hp > 0">
+                        <pre>[{{e.hp}}/{{e.max_hp}}]</pre>
+                    </span>
+                    <span ng-if="e.hp <= 0">
+                        [DEAD]
+                    </span>
+                </td>
+                <td>
+                    <pre>{{e.prioritised_need}}</pre>
+                    <pre>{{e.ai.status}}</pre>
+                </td>
+                <td>
+                    <!-- <code></code> -->
+                    <pre>{{e.needs |json}}</pre>
+                    <!-- <code> -->
+                    <!-- </code> -->
+                </td>
+                <td>
+                    <pre>{{e.needs_coefficients |json}}</pre>
+                </td>
+            </tr>
+            <td>
+                <!-- <code></code> -->
+            </td>
+        </tbody>
+    </table>
+    <div >
+    </div>
+</div>

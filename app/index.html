@@ -1,0 +1,93 @@
+<html>
+    <head>
+        <meta charset="UTF-8"/>
+        <title>Document</title>
+
+        <link href="styles/bootstrap.css" rel="stylesheet"/>
+        <link href="styles/bootstrap-theme.css" rel="stylesheet"/>
+        <link href="styles/custom.css" rel="stylesheet"/>
+    </head>
+    <body ng-app="BR">
+        <div id="all" class="container">
+
+            <!-- MENU -->
+            <br-menu ng-hide="true"></br-menu>
+            <!-- MENU -->
+
+            <!-- MAIN -->
+            <div class="row">
+                <div id="main-view" class="main-view-container col-lg-12">
+
+                </div>
+            </div>
+            <!-- MAIN -->
+
+            <!-- AUX -->
+            <div class="row">
+                <div id="console-view" class="col-lg-12">
+                    <br-console></br-console>
+                </div>
+
+                <div id="aux-view" class="column six">
+
+                </div>
+            </div>
+            <!-- AUX -->
+
+        </div>
+
+        <div class="scripts">
+
+
+            <!-- 3RD Party -->
+            <script src="program/third_party/state-machine.js"></script>
+            <script src="program/third_party/kinetic.js"></script>
+            <script src="program/third_party/rot.js"></script>
+            <script src="program/third_party/jquery2.js"></script>
+            <script src="program/third_party/angular.js"></script>
+
+            <!-- Initialisation -->
+            <script src="program/initialise.js"></script>
+
+            <!-- Data -->
+            <script src="data/initialise.js"></script>
+            <script src="data/common.js"></script>
+            <script src="data/strings.js"></script>
+
+
+
+            <!-- Generic Tools -->
+            <script src="program/BR.js"></script>
+
+            <!-- Customized ROT -->
+            <script src="program/BR.ROT.js"></script>
+
+            <!-- AI -->
+            <script src="program/BR.AI.js"></script>
+            <script src="program/BR.AI.BaseAI.js"></script>
+
+            <!-- Types -->
+            <script src="program/BR.T.js"></script>
+            <script src="program/BR.T.Pos.js"></script>
+            <script src="program/BR.T.Tile.js"></script>
+            <script src="program/BR.T.Map.js"></script>
+            <script src="program/BR.T.World.js"></script>
+
+            <!-- Entities -->
+            <script src="program/BR.E.js"></script>
+            <script src="program/BR.E.Entity.js"></script>
+            <script src="program/BR.E.Animate.js"></script>
+            <script src="program/BR.E.Inanimate.js"></script>
+
+            <!-- Main Program -->
+            <script src="program/main.js"></script>
+
+            <!-- for fun -->
+            <script src="program/ai/convnet-min_2014-06-16.js"></script>
+            <script src="program/ai/util.js"></script>
+            <script src="program/ai/deepqlearn.js"></script>
+            <script src="program/ai/StateMachine.js"></script>
+            <script src="program/ai/BR.AI.js"></script>
+        </div>
+    </body>
+</html>
