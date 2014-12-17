@@ -1,0 +1,14 @@
+{
+  "name": "combatible2",
+  "version": "0.0.1",
+  "description": "fun stuff",
+  "main": "main.js",
+  "scripts": {
+    "test": "test.js"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "lodash": "^2.4.1"
+  }
+}
