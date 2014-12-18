@@ -37,7 +37,8 @@ define([
     add_random_area: {
       value: function () {
         this.areas.push(new Area(_.assign({
-          random: true
+          random: true,
+          populate: true
         }, this.cfg)));
       }
     }

@@ -31,7 +31,40 @@ define([
   var entities = Object.create(null, {
     creatures: {
       value: {
-
+        gorm: {
+          adult: getter({
+            meta: [
+              {type: 'name', value: 'gorm'},
+              {type: 'type', value: 'creature'}
+            ],
+            blocking: false,
+            repr: {
+              glyph: 'G',
+              color: {
+                fg: 'cornflowerblue',
+                bg: '#111'
+              }
+            }
+          })
+        }
+      }
+    },
+    misc: {
+      value: {
+        edible_mushrooms: getter({
+          meta: [
+            {type: 'name', value: 'mushrooms'},
+            {type: 'type', value: 'stationary_organism'}
+          ],
+          blocking: true,
+          repr: {
+            glyph: "τ",
+            color: {
+              fg: "#6A5ACD",
+              bg: "#111"
+            }
+          }
+        })
       }
     },
     walls: {

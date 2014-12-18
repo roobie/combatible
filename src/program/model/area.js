@@ -21,6 +21,9 @@ define([
         if (properties.random) {
           this.generate_procedural();
         }
+        if (properties.populate) {
+          this.populate();
+        }
 
         this.draw_all();
       }
@@ -52,6 +55,34 @@ define([
         var area = this;
         this.all_tile_positions.forEach(function(pos) {
           area.draw_at(pos);
+        });
+      }
+    },
+    non_blocked_tiles: {
+      get: function() {
+        var area = this;
+        return _(this.all_tile_positions)
+          .filter(function(pos) {
+            return !_.some(area[pos].entities, { blocking: true });
+          })
+          .map(function(pos) {
+            return area[pos];
+          })
+          .valueOf();
+      }
+    },
+    populate: {
+      value: function() {
+        var nbt = this.non_blocked_tiles;
+        var tile = _.sample(nbt);
+        if (tile.entities[0].blocking) {
+          throw TypeError();
+        }
+        tile.add(entities.creatures.gorm.adult());
+
+        _.range(0, nbt.length / 10).forEach(function() {
+        var tile = _.sample(nbt);
+          tile.add(entities.misc.edible_mushrooms());
         });
       }
     },
