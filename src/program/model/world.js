@@ -1,8 +1,8 @@
 define([
+  'engine/instance',
   './area',
-  '../engine/main',
   '../lib/lodash'
-], function (Area, engine, _) {
+], function (engine_instance, Area, _) {
 
   function World(properties) {
     this.initialise(properties);
@@ -11,15 +11,7 @@ define([
   Object.defineProperties(World.prototype, {
     initialise: {
       value: function (properties) {
-        var scheduler = new engine.Scheduler.Action();
-        var engine_instance = new engine.Engine(scheduler);
-
         Object.defineProperties(this, {
-          engine: {
-            get: function () {
-              return engine_instance;
-            }
-          },
           areas: {
             value: []
           }
@@ -31,7 +23,7 @@ define([
     start: {
       value: function () {
         this.add_random_area();
-        this.engine.start();
+        engine_instance.start();
       }
     },
     add_entity: {
@@ -45,7 +37,6 @@ define([
     add_random_area: {
       value: function () {
         this.areas.push(new Area(_.assign({
-          display: this.cfg.display,
           random: true
         }, this.cfg)));
       }

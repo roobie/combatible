@@ -1,9 +1,11 @@
 define([
   './tile',
+  './entities',
+  '../display',
   '../lib/lodash',
   '../lib/rot',
   '../util/xy'
-], function (Tile, _, ROT, xy) {
+], function (Tile, entities, display, _, ROT, xy) {
 
   function Area(properties) {
     this.initialise(properties);
@@ -38,11 +40,18 @@ define([
         return _(a).flatten().valueOf();
       }
     },
+    draw_at: {
+      value: function(p) {
+        var top_ent = this[p].get_top_entity(),
+            r = top_ent.repr;
+        display.draw(p.x, p.y, r.glyph, r.color.fg, r.color.bg);
+      }
+    },
     draw_all: {
       value: function() {
         var area = this;
         this.all_tile_positions.forEach(function(pos) {
-          area[pos].draw();
+          area.draw_at(pos);
         });
       }
     },
@@ -58,30 +67,10 @@ define([
         var dig = function(x, y, value) {
           var p = xy(x, y);
           if (value) {
-            this[p].add({
-              names: [{ type: "name", value: "wall" }],
-              blocking: true,
-              repr: {
-                glyph: "#",
-                color: {
-                  fg: "#333",
-                  bg: "#111"
-                }
-              }
-            });
+            this[p].add(entities.walls.simple());
           } else {
             non_blocked_cells.push(p);
-            this[p].add({
-                names: [{ type: "name", value: "floor" }],
-                blocking: false,
-                repr: {
-                    glyph: "·",
-                    color: {
-                        fg: "#666",
-                        bg: "#000"
-                    }
-                }
-            });
+            this[p].add(entities.floors.simple());
           }
         };
 
@@ -93,7 +82,6 @@ define([
         var area = this;
         this.all_tile_positions.forEach(function(pos) {
           area[pos] = new Tile({
-            display: area.display,
             pos: pos,
             parent: area
           });

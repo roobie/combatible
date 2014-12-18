@@ -1,26 +1,21 @@
 define([
+  'display',
+
   'model/world',
 
   'lib/rot',
   'lib/lodash',
 
   'util/window'
-], function(World, ROT, _, window) {
+], function(display, World, ROT, _, window) {
 
-  var display_cfg = {
-    width: 20,
-    height: 10,
-    fontSize: 18,
-    fontFamily: 'Courier New',
-    bg: '#222'
-  };
+  var display_cfg = display.getOptions();
 
   var onLoad = function _onLoad() {
     window.removeEventListener('load', _onLoad);
     window.document
       .getElementById('main-view')
-      .appendChild(game.display.getContainer());
-    game.create_world();
+      .appendChild(display.getContainer());
     game.world.start();
   };
 
@@ -31,15 +26,8 @@ define([
         onLoad();
       }
     },
-    display: {
-      value: new ROT.Display(_.assign({}, display_cfg))
-    },
-    create_world: {
-      value: function() {
-        this.world = new World(_.assign({
-          display: this.display
-        }, display_cfg));
-      }
+    world: {
+      value: new World(_.assign({}, display_cfg))
     }
   });
 

@@ -2,6 +2,7 @@ define([
   '../lib/lodash'
 ], function(_) {
 
+
   function Tile(properties) {
     this.initialise(properties);
   }
@@ -18,12 +19,16 @@ define([
         this.entities.unshift(thing);
       }
     },
+    get_top_entity: {
+      value: function() {
+        // TODO: check for most interesting thing.
+        // i.e. blocking > non-blocking
+        return this.entities[0];
+      }
+    },
     draw: {
       value: function() {
-        var p = this.pos,
-            top_ent = this.entities[0],
-            r = top_ent.repr;
-        this.display.draw(p.x, p.y, r.glyph, r.color.fg, r.color.bg);
+        this.parent.draw_at(this.pos);
       }
     }
   });
