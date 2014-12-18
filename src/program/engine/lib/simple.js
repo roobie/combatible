@@ -1,4 +1,6 @@
-define([], function() {
+define([
+  'util/window'
+], function(window) {
   "use strict";
 
   var ROT = Object.create(null);
@@ -262,11 +264,15 @@ define([], function() {
           this.lock();
 
           result.then(function() {
-            setTimeout(function() {
+            window.setTimeout(function() {
               self.unlock();
             }, ROT.timeout);
           });
-
+        } else {
+          this.lock();
+          window.setTimeout(function() {
+            self.unlock();
+          }, ROT.timeout);
         }
       }
 

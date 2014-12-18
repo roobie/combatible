@@ -1,11 +1,13 @@
 define([
   './tile',
   './entities',
-  '../display',
-  '../lib/lodash',
-  '../lib/rot',
-  '../util/xy'
-], function (Tile, entities, display, _, ROT, xy) {
+
+  'display',
+  'lib/lodash',
+  'lib/rot',
+  'util/xy',
+  'util/clock'
+], function (Tile, entities, display, _, ROT, xy, clock) {
 
   function Area(properties) {
     this.initialise(properties);
@@ -78,11 +80,25 @@ define([
         if (tile.entities[0].blocking) {
           throw TypeError();
         }
-        tile.add(entities.creatures.gorm.adult());
+        tile.add(entities.creatures.gorm.adult(), true);
 
         _.range(0, nbt.length / 10).forEach(function() {
         var tile = _.sample(nbt);
           tile.add(entities.misc.edible_mushrooms());
+        });
+
+        var area = this;
+
+        interval.create({
+          cycle_length: 10,
+          fn: function() {
+            var nbt = area.non_blocked_tiles;
+            _.range(0, nbt.length / 20).forEach(function() {
+              var tile = _.sample(nbt);
+              tile.add(entities.misc.edible_mushrooms());
+              tile.draw();
+            });
+          }
         });
       }
     },

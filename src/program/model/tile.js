@@ -1,6 +1,7 @@
 define([
-  '../lib/lodash'
-], function(_) {
+  '../lib/lodash',
+  'engine/scheduler'
+], function(_, scheduler) {
 
 
   function Tile(properties) {
@@ -15,8 +16,11 @@ define([
       }
     },
     add: {
-      value: function(thing) {
+      value: function(thing, actor) {
         this.entities.unshift(thing);
+        if (actor) {
+          scheduler.add(thing, true);
+        }
       }
     },
     get_top_entity: {

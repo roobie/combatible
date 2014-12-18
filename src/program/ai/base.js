@@ -17,6 +17,7 @@ define([
     },
     act: {
       value: function() {
+        return {};
       }
     }
   });

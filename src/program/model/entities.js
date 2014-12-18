@@ -1,7 +1,8 @@
 define([
   '../lib/lodash',
-  './entity'
-], function(_, Entity) {
+  './entity',
+  './entity.animate',
+], function(_, Entity, Animate) {
   var get_base_entity = function() {
     return {
       names: [],
@@ -16,23 +17,36 @@ define([
     };
   };
 
-  var getter = function(base_properties) {
-    return function(extra_properties) {
-      return new Entity(
-        _.assign(
-          {},
-          get_base_entity(),
-          base_properties,
-          extra_properties)
-      );
-    };
+  var getter = {
+    actor: function(base_properties) {
+      return function(extra_properties) {
+        return new Animate(
+          _.assign(
+            {},
+            get_base_entity(),
+            base_properties,
+            extra_properties)
+        );
+      };
+    },
+    non_actor: function(base_properties) {
+      return function(extra_properties) {
+        return new Entity(
+          _.assign(
+            {},
+            get_base_entity(),
+            base_properties,
+            extra_properties)
+        );
+      };
+    }
   };
 
   var entities = Object.create(null, {
     creatures: {
       value: {
         gorm: {
-          adult: getter({
+          adult: getter.actor({
             meta: [
               {type: 'name', value: 'gorm'},
               {type: 'type', value: 'creature'}
@@ -51,7 +65,7 @@ define([
     },
     misc: {
       value: {
-        edible_mushrooms: getter({
+        edible_mushrooms: getter.non_actor({
           meta: [
             {type: 'name', value: 'mushrooms'},
             {type: 'type', value: 'stationary_organism'}
@@ -69,7 +83,7 @@ define([
     },
     walls: {
       value: {
-        simple: getter({
+        simple: getter.non_actor({
           meta: [
             {type: 'name', value: 'wall'},
             {type: 'type', value: 'structure'}
@@ -87,7 +101,7 @@ define([
     },
     floors: {
       value: {
-        simple: getter({
+        simple: getter.non_actor({
           meta: [
             {type: 'name', value: 'floor'},
             {type: 'type', value: 'structure'}
