@@ -89,7 +89,7 @@ define([
 
         var area = this;
 
-        interval.create({
+        clock.create_interval({
           cycle_length: 10,
           fn: function() {
             var nbt = area.non_blocked_tiles;
