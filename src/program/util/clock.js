@@ -3,7 +3,7 @@ define([
   'engine/scheduler'
 ], function(window, scheduler) {
   return {
-    create: function(config) {
+    create_interval: function(config) {
 
       var tid,
           game_time_cycle_start;
