@@ -5,7 +5,8 @@ define([
 ], function(_, Entity, Animate) {
   var get_base_entity = function() {
     return {
-      names: [],
+      meta: [],
+      tracked: void 0,
       blocking: void 0,
       repr: {
         glyph: "",
@@ -48,14 +49,15 @@ define([
         gorm: {
           adult: getter.actor({
             meta: [
-              {type: 'name', value: 'gorm'},
+              {type: 'race_name', value: 'gorm'},
               {type: 'type', value: 'creature'}
             ],
+            tracked: true,
             blocking: false,
             repr: {
               glyph: 'G',
               color: {
-                fg: 'cornflowerblue',
+                fg: 'salmon',
                 bg: '#111'
               }
             }
@@ -63,8 +65,17 @@ define([
         }
       }
     },
+
     misc: {
       value: {
+        // spinner: getter.actor({
+        //   meta: [
+        //     {type: 'type', value: 'spinner'}
+        //   ],
+        //   blocking: false,
+        //   repr: {}
+        // }),
+
         edible_mushrooms: getter.non_actor({
           meta: [
             {type: 'name', value: 'mushrooms'},
@@ -81,6 +92,7 @@ define([
         })
       }
     },
+
     walls: {
       value: {
         simple: getter.non_actor({
@@ -99,6 +111,7 @@ define([
         })
       }
     },
+
     floors: {
       value: {
         simple: getter.non_actor({

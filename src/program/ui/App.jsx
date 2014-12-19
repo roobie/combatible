@@ -5,19 +5,35 @@
 'use strict';
 
 define([
-  'lib/react'
-], function (React) {
+  'lib/react',
+
+  'lib/radio'
+], function (React, radio) {
 
   var App = React.createClass({
+    getInitialState: function () {
+      return {};
+    },
+    dataChanged: function (data) {
+      this.setState(data);
+    },
+    componentDidMount: function () {
+      radio('data_changed').subscribe([this.dataChanged, this]);
+    },
+    componentWillUnmount: function () {
+      radio('data_changed').unsubscribe(this.dataChanged);
+    },
     render: function () {
       return (
         <div>
-          Success
+          <code>
+            <pre>{JSON.stringify(this.state, null, 2)}</pre>
+          </code>
         </div>
       );
     }
   });
 
-  React.renderComponent(<App />, document.getElementById('aux-view')); // jshint ignore:line
+  React.render(<App />, document.getElementById('aux-view')); // jshint ignore:line
 
 });

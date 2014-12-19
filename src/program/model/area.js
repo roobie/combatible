@@ -82,7 +82,7 @@ define([
         }
         tile.add(entities.creatures.gorm.adult(), true);
 
-        _.range(0, nbt.length / 10).forEach(function() {
+        _.range(0, nbt.length / 50).forEach(function() {
         var tile = _.sample(nbt);
           tile.add(entities.misc.edible_mushrooms());
         });
@@ -90,10 +90,10 @@ define([
         var area = this;
 
         clock.create_interval({
-          cycle_length: 10,
+          cycle_length: 20,
           fn: function() {
             var nbt = area.non_blocked_tiles;
-            _.range(0, nbt.length / 20).forEach(function() {
+            _.range(0, nbt.length / 100).forEach(function() {
               var tile = _.sample(nbt);
               tile.add(entities.misc.edible_mushrooms());
               tile.draw();
@@ -107,9 +107,25 @@ define([
         var area = this;
         var non_blocked_cells = [];
 
-        var map_creator = new ROT.Map.Cellular(area.width,
-                                               area.height);
-        map_creator.randomize(0.42);
+        var  = _.sample([
+          new ROT.Map.Arena(area.width,
+                            area.height),
+          new ROT.Map.DividedMaze(area.width,
+                                  area.height),
+          new ROT.Map.IceyMaze(area.width,
+                               area.height),
+          new ROT.Map.EllerMaze(area.width,
+                                area.height),
+          new ROT.Map.Cellular(area.width,
+                               area.height),
+          new ROT.Map.Digger(area.width,
+                             area.height),
+          new ROT.Map.Uniform(area.width,
+                              area.height),
+          new ROT.Map.Rogue(area.width,
+                            area.height)
+        ]);
+        //map_creator.randomize(0.42);
 
         var dig = function(x, y, value) {
           var p = xy(x, y);

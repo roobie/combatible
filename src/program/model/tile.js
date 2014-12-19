@@ -1,5 +1,5 @@
 define([
-  '../lib/lodash',
+  'lib/lodash',
   'engine/scheduler'
 ], function(_, scheduler) {
 
@@ -16,9 +16,9 @@ define([
       }
     },
     add: {
-      value: function(thing, actor) {
+      value: function(thing, is_actor) {
         this.entities.unshift(thing);
-        if (actor) {
+        if (is_actor) {
           scheduler.add(thing, true);
         }
       }

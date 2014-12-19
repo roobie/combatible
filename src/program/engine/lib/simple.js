@@ -257,7 +257,9 @@ define([
         // no actors
         if (!actor) { return this.lock(); }
 
-        var result = actor.act();
+        var result = actor.act(function setDuration_bound(duration) {
+          self._scheduler.setDuration(duration);
+        });
 
         // actor returned a "thenable", looks like a Promise
         if (result && result.then) {

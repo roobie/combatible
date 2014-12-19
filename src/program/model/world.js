@@ -1,8 +1,9 @@
 define([
   'engine/instance',
   './area',
-  '../lib/lodash'
-], function (engine_instance, Area, _) {
+  'lib/lodash',
+  'lib/radio'
+], function (engine_instance, Area, _, radio) {
 
   function World(properties) {
     this.initialise(properties);
@@ -18,6 +19,8 @@ define([
         });
         this.current_area_index = 0;
         this.cfg = properties;
+
+        //radio('')
       }
     },
     start: {

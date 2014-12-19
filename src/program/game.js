@@ -3,13 +3,29 @@ define([
 
   'model/world',
 
+  'engine/scheduler',
+
+  'data/tracked_objects',
+
+  'lib/radio',
   'lib/rot',
   'lib/lodash',
 
   'util/window'
-], function(display, World, ROT, _, window) {
+], function(display, World, scheduler, tracked_objects, radio, ROT, _, window) {
 
   var display_cfg = display.getOptions();
+
+  scheduler.add({
+    act: function () {
+      scheduler.setDuration(1);
+
+      tracked_objects.meta.engine = {
+        time: 1 + ((tracked_objects.meta.engine || {}).time || 0)
+      };
+      radio('data_changed').broadcast(tracked_objects);
+    }
+  }, true);
 
   var onLoad = function _onLoad() {
     window.removeEventListener('load', _onLoad);
