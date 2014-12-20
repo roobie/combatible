@@ -1,19 +1,22 @@
 define([
-  './tile',
+  //'./tile',
   './entities',
+
+  'engine/scheduler',
 
   'display',
   'lib/lodash',
   'lib/rot',
   'util/xy',
   'util/clock'
-], function (Tile, entities, display, _, ROT, xy, clock) {
+], function (entities, scheduler, display, _, ROT, xy, clock) {
 
   function Area(properties) {
     this.initialise(properties);
   }
 
   Object.defineProperties(Area.prototype, {
+
     initialise: {
       value: function (properties) {
         _.assign(this, properties);
@@ -30,6 +33,7 @@ define([
         this.draw_all();
       }
     },
+
     all_tile_positions: {
       get: function() {
         var area = this,
@@ -45,13 +49,21 @@ define([
         return _(a).flatten().valueOf();
       }
     },
+
+    get_top_entity_at: {
+      value: function (pos) {
+        return this[pos][0];
+      }
+    },
+
     draw_at: {
       value: function(p) {
-        var top_ent = this[p].get_top_entity(),
+        var top_ent = this.get_top_entity_at(p),
             r = top_ent.repr;
         display.draw(p.x, p.y, r.glyph, r.color.fg, r.color.bg);
       }
     },
+
     draw_all: {
       value: function() {
         var area = this;
@@ -60,43 +72,77 @@ define([
         });
       }
     },
+
     non_blocked_tiles: {
       get: function() {
         var area = this;
         return _(this.all_tile_positions)
           .filter(function(pos) {
-            return !_.some(area[pos].entities, { blocking: true });
-          })
-          .map(function(pos) {
-            return area[pos];
+            return !_.some(area[pos], { blocking: true });
           })
           .valueOf();
       }
     },
+
+    is_passable: {
+      value: function(pos) {
+        var any_blocking = function(arr) {
+          return _.some(arr, { blocking: true });
+        };
+        return !any_blocking(this[pos]);
+      }
+    },
+
+    add: {
+      value: function(pos, entity, is_actor) {
+        this[pos].unshift(entity);
+        entity.pos = pos.copy();
+        if (is_actor) {
+          Object.defineProperty(entity, 'parent_area', {
+            value: this,
+            //writable: true,
+            configurable: true
+          });
+          scheduler.add(entity, is_actor);
+        }
+      }
+    },
+
+    reposition: {
+      value: function(what, to_pos) {
+        var from_pos = what.pos;
+        var current = this[from_pos];
+        _.remove(current, what);
+        this.draw_at(from_pos);
+        this[to_pos].unshift(what);
+        what.pos = to_pos.copy();
+        this.draw_at(to_pos);
+      }
+    },
+
     populate: {
       value: function() {
         var nbt = this.non_blocked_tiles;
-        var tile = _.sample(nbt);
-        if (tile.entities[0].blocking) {
-          throw TypeError();
-        }
-        tile.add(entities.creatures.gorm.adult(), true);
-
-        _.range(0, nbt.length / 50).forEach(function() {
-        var tile = _.sample(nbt);
-          tile.add(entities.misc.edible_mushrooms());
-        });
-
         var area = this;
 
+        _.range(0, 200).forEach(function() {
+          var pos = _.sample(nbt);
+
+          // tile.add(entities.creatures.gorm.adult(), true);
+          area.add(pos, entities.creatures.gorm.adult(), true);
+          _.remove(pos, nbt);
+        });
+
+
         clock.create_interval({
-          cycle_length: 20,
+          cycle_length: 100,
           fn: function() {
             var nbt = area.non_blocked_tiles;
             _.range(0, nbt.length / 100).forEach(function() {
-              var tile = _.sample(nbt);
-              tile.add(entities.misc.edible_mushrooms());
-              tile.draw();
+              var pos = _.sample(nbt);
+              area.add(pos, entities.misc.edible_mushrooms());
+              area.draw_at(pos);
+              _.remove(nbt, pos);
             });
           }
         });
@@ -107,33 +153,29 @@ define([
         var area = this;
         var non_blocked_cells = [];
 
-        var  = _.sample([
-          new ROT.Map.Arena(area.width,
-                            area.height),
-          new ROT.Map.DividedMaze(area.width,
-                                  area.height),
-          new ROT.Map.IceyMaze(area.width,
-                               area.height),
-          new ROT.Map.EllerMaze(area.width,
-                                area.height),
-          new ROT.Map.Cellular(area.width,
-                               area.height),
-          new ROT.Map.Digger(area.width,
-                             area.height),
-          new ROT.Map.Uniform(area.width,
-                              area.height),
-          new ROT.Map.Rogue(area.width,
-                            area.height)
+        var generator_name = _.sample([
+          'Arena',
+          'DividedMaze',
+          'IceyMaze',
+          'EllerMaze',
+          'Cellular',
+          'Digger',
+          'Uniform',
+          'Rogue'
         ]);
+
+        var map_creator = new ROT.Map[generator_name](
+          area.width,
+          area.height);
         //map_creator.randomize(0.42);
 
         var dig = function(x, y, value) {
           var p = xy(x, y);
           if (value) {
-            this[p].add(entities.walls.simple());
+            this.add(p, entities.walls.simple());
           } else {
             non_blocked_cells.push(p);
-            this[p].add(entities.floors.simple());
+            this.add(p, entities.floors.simple());
           }
         };
 
@@ -144,10 +186,7 @@ define([
       value: function() {
         var area = this;
         this.all_tile_positions.forEach(function(pos) {
-          area[pos] = new Tile({
-            pos: pos,
-            parent: area
-          });
+          area[pos] = [];
         });
       }
     }

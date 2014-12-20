@@ -1,11 +1,10 @@
 define([
+  'config',
   'util/window'
-], function(window) {
+], function(config, window) {
   "use strict";
 
   var ROT = Object.create(null);
-
-  ROT.timeout = 300;
 
   ROT.EventQueue = (function() {
     /**
@@ -227,13 +226,18 @@ define([
     function Engine(scheduler) {
       this._scheduler = scheduler;
       this._lock = 1;
+
+      this._time = 0;
     }
 
     /**
      * Start the main loop. When this call returns, the loop is locked.
      */
     Engine.prototype.start = function() {
-      return this.unlock();
+      // return this.unlock();
+
+      window.requestAnimationFrame(this.unlock.bind(this));
+      return this;
     };
 
     /**
@@ -247,35 +251,33 @@ define([
     /**
      * Resume execution (paused by a previous lock)
      */
-    Engine.prototype.unlock = function() {
+    Engine.prototype.unlock = function(timestamp) {
+      var progress = timestamp - this._time;
+      this._time = timestamp;
+
+      // var time = this._scheduler.getTime();
+      // var fps = time / progress * 1000;
+
       var self = this;
       if (!this._lock) { throw new Error("Cannot unlock unlocked engine"); }
       this._lock--;
 
-      while (!this._lock) {
-        var actor = this._scheduler.next();
-        // no actors
-        if (!actor) { return this.lock(); }
+      var actor = this._scheduler.next();
+      // no actors
+      if (!actor) { return this.lock(); }
 
-        var result = actor.act(function setDuration_bound(duration) {
-          self._scheduler.setDuration(duration);
-        });
+      var result = actor.act(function setDuration_bound(duration) {
+        self._scheduler.setDuration(duration);
+      });
 
-        // actor returned a "thenable", looks like a Promise
-        if (result && result.then) {
-          this.lock();
-
+      // actor returned a "thenable", looks like a Promise
+      this.lock();
+      if (result && result.then) {
           result.then(function() {
-            window.setTimeout(function() {
-              self.unlock();
-            }, ROT.timeout);
+            window.requestAnimationFrame(self.unlock.bind(self));
           });
-        } else {
-          this.lock();
-          window.setTimeout(function() {
-            self.unlock();
-          }, ROT.timeout);
-        }
+      } else {
+        window.requestAnimationFrame(this.unlock.bind(this));
       }
 
       return this;

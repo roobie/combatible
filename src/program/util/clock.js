@@ -12,7 +12,7 @@ define([
         var this_arg = config.this_arg,
             cycle_length = config.cycle_length,
             fn = config.fn,
-            timeout = config.timeout || 5000,
+            timeout = config.timeout || 500,
             stop = config.stop;
 
         if (stop) {

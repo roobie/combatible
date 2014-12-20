@@ -3,9 +3,9 @@ define([
   'lib/rot'
 ], function(_, ROT) {
   var display_cfg = {
-    width: 80,
-    height: 24,
-    fontSize: 14,
+    width: 40,
+    height: 14,
+    fontSize: 20,
     fontFamily: 'Courier New',
     bg: '#222'
   };

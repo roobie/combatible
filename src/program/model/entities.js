@@ -81,7 +81,7 @@ define([
             {type: 'name', value: 'mushrooms'},
             {type: 'type', value: 'stationary_organism'}
           ],
-          blocking: true,
+          blocking: false,
           repr: {
             glyph: "τ",
             color: {

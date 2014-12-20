@@ -1,16 +1,22 @@
 define([
   './entity',
+  'lib/rot',
   'ai/base'
-], function(Entity, BaseAI) {
+], function(Entity, ROT, BaseAI) {
 
   function Animate(properties) {
     this.initialise(properties);
   }
 
-  Object.defineProperties(Animate.prototype, {
+  Animate.prototype = Object.create(Entity.prototype, {
+    constructor: {
+      value: Animate
+    },
     initialise: {
       value: function(properties) {
         Entity.prototype.initialise.call(this, properties);
+
+        this.speed = ROT.RNG.getUniform();
 
         Object.defineProperties(this, {
           ai: {
@@ -24,7 +30,7 @@ define([
     },
     calculate_duration: {
       value: function(base_duration) {
-        return base_duration;
+        return 1 / (base_duration * this.speed);
       }
     },
     act: {
@@ -33,6 +39,7 @@ define([
 
         var d = this.calculate_duration((action || 0).base_duration || 1);
         set_duration(d);
+        action.exec(this);
 
         return action;
       }
