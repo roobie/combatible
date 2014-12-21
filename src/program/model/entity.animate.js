@@ -1,8 +1,9 @@
 define([
   './entity',
   'lib/rot',
+  'lib/lodash',
   'ai/base'
-], function(Entity, ROT, BaseAI) {
+], function(Entity, ROT, _, BaseAI) {
 
   function Animate(properties) {
     this.initialise(properties);
@@ -16,7 +17,12 @@ define([
       value: function(properties) {
         Entity.prototype.initialise.call(this, properties);
 
-        this.speed = ROT.RNG.getUniform();
+        this.speed = _.sample([
+          0.6,
+          0.7,
+          0.8,
+          0.9
+        ]);
 
         Object.defineProperties(this, {
           ai: {

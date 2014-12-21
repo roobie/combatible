@@ -1,5 +1,5 @@
 define([], function() {
   return {
-    frame_interval: 300
+    frame_interval: 10
   };
 });

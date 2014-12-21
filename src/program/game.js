@@ -16,6 +16,10 @@ define([
 
   var display_cfg = display.getOptions();
 
+  radio('log:system').broadcast({
+    level: 'debug',
+    message: 'Adding dummy actor to scheduler.'
+  });
   scheduler.add({
     act: function () {
       scheduler.setDuration(1);
@@ -28,6 +32,11 @@ define([
   }, true);
 
   var onLoad = function _onLoad() {
+    radio('log:system').broadcast({
+      level: 'debug',
+      message: 'Appending canvas to element, and starting the game engine.'
+    });
+
     window.removeEventListener('load', _onLoad);
     window.document
       .getElementById('main-view')

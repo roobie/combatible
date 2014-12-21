@@ -279,8 +279,9 @@ define([
       if (!this._lock) { throw new Error("Cannot unlock unlocked engine"); }
       this._lock--;
 
-      // var batch_count = -this._scheduler._queue._events.length;
-      var batch_count = parseInt(this._scheduler._queue._events.length / 10);
+      // var batch_count = this._scheduler._queue._events.length;
+      // var batch_count = parseInt(this._scheduler._queue._events.length / 10);
+      var batch_count = parseInt(this._scheduler._queue._events.length / config.frame_interval);
 
       for(var i = 0; i < batch_count; i++) {
         var actor = this._scheduler.next();

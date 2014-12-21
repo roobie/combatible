@@ -6,10 +6,11 @@
 
 define([
   'config',
+  'data/log',
 
   'lib/react',
   'lib/radio'
-], function (config, React, radio) {
+], function (config, log, React, radio) {
 
   var getHumanizedTime = function() {
     return (1000 - config.frame_interval) / 10;
@@ -30,9 +31,22 @@ define([
     getHandlerFor: function(what) {
       return {
         'change_speed': function(event) {
-          config.frame_interval = 1000 - parseInt(event.target.value, 10);
+          config.frame_interval = 11 - event.target.value;
         }
       }[what];
+    },
+    getRepr: function(entity) {
+      var getStyle = function () {
+        return {
+          color: entity.repr.color.fg,
+          backgroundColor: entity.repr.color.bg
+        }
+      }
+      return (
+        <span style={getStyle()}>
+          {entity.repr.glyph}
+        </span>
+      )
     },
 
     componentDidMount: function () {
@@ -44,6 +58,17 @@ define([
     render: function () {
       return (
         <div>
+          <label>
+            <input id="change_speed_input"
+                   name="change_speed"
+                   type="range"
+                   min="1"
+                   step="1"
+                   max="10"
+                   defaultValue={11 - config.frame_interval}
+                   onChange={this.getHandlerFor('change_speed')} />
+            {11 - config.frame_interval}
+          </label>
           <div>FPS: {this.state.meta.fps}</div>
           <div>Average FPS: {this.state.meta.avg_fps}</div>
           <div>Engine time: {this.state.meta.engine.time}</div>
@@ -52,12 +77,10 @@ define([
             return (
               <div key={index}>
                 <span>
-                  {this.state.entities[key].repr.glyph}@
-                  {this.state.entities[key].pos.x}:
-                       {this.state.entities[key].pos.y}
+                  {this.getRepr(this.state.entities[key])}@[
+                  {this.state.entities[key].pos.x.toString().lpad()}:
+                  {this.state.entities[key].pos.y.toString().lpad()}]
                 </span>
-              <span> speed:{this.state.entities[key].speed.toFixed(2)}</span>
-              <span> moves:{this.state.entities[key].moved_count}</span>
               </div>
             );
           }).bind(this))}

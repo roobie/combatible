@@ -140,7 +140,7 @@ define([
         var nbt = this.non_blocked_tiles;
         var area = this;
 
-        _.range(0, 40).forEach(function() {
+        _.range(0, 20).forEach(function() {
           var pos = _.sample(nbt);
 
           // tile.add(entities.creatures.gorm.adult(), true);
@@ -172,10 +172,10 @@ define([
 
         var generator_name = _.sample([
           // 'Arena',
-          // 'DividedMaze',
+          'DividedMaze',
           // 'IceyMaze',
           // 'EllerMaze',
-          'Cellular',
+          // 'Cellular',
           // 'Digger',
           // 'Uniform',
           // 'Rogue'
@@ -184,7 +184,6 @@ define([
         var map_creator = new ROT.Map[generator_name](
           area.width,
           area.height);
-        map_creator.randomize(0.42);
 
         var dig = function(x, y, value) {
           var p = xy(x, y);
@@ -196,6 +195,12 @@ define([
           }
         };
 
+        if (generator_name === 'Cellular') {
+          map_creator.randomize(0.48);
+          for(var i = 0; i < 10; i++) {
+            map_creator.create();
+          }
+        }
         map_creator.create(dig.bind(this));
       }
     },
