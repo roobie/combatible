@@ -74,10 +74,12 @@ define([
     },
 
     non_blocked_tiles: {
-      get: function() {
-        var area = this;
+      get: function non_blocked_tiles() {
+        var area = this,
+            atp = this.all_tile_positions,
+            result = [];
         return _(this.all_tile_positions)
-          .filter(function(pos) {
+          .filter(function filter_blocking(pos) {
             return !_.some(area[pos], { blocking: true });
           })
           .valueOf();
@@ -87,9 +89,22 @@ define([
     is_passable: {
       value: function(pos) {
         var any_blocking = function(arr) {
-          return _.some(arr, { blocking: true });
+          //return _.some(arr, { blocking: true });
+
+          // Optimisation. Increase FPS by 10%
+          for(var i = 0; i < arr.length; i++) {
+            if (arr[i].blocking) { return true; }
+          }
+          return false;
         };
-        return !any_blocking(this[pos]);
+        return this.is_inside_map(pos) &&
+          !any_blocking(this[pos] || []);
+      }
+    },
+
+    is_inside_map: {
+      value: function(pos) {
+        return pos.x > -1 && pos.y > -1 && pos.x < this.width && pos.y < this.height;
       }
     },
 
@@ -125,11 +140,13 @@ define([
         var nbt = this.non_blocked_tiles;
         var area = this;
 
-        _.range(0, 200).forEach(function() {
+        _.range(0, 40).forEach(function() {
           var pos = _.sample(nbt);
 
           // tile.add(entities.creatures.gorm.adult(), true);
-          area.add(pos, entities.creatures.gorm.adult(), true);
+          var ctype = Math.random() < 0.5 ? 'gorm' : 'tera';
+          var c = entities.creatures[ctype].adult();
+          area.add(pos, c, true);
           _.remove(pos, nbt);
         });
 
@@ -154,20 +171,20 @@ define([
         var non_blocked_cells = [];
 
         var generator_name = _.sample([
-          'Arena',
-          'DividedMaze',
-          'IceyMaze',
-          'EllerMaze',
+          // 'Arena',
+          // 'DividedMaze',
+          // 'IceyMaze',
+          // 'EllerMaze',
           'Cellular',
-          'Digger',
-          'Uniform',
-          'Rogue'
+          // 'Digger',
+          // 'Uniform',
+          // 'Rogue'
         ]);
 
         var map_creator = new ROT.Map[generator_name](
           area.width,
           area.height);
-        //map_creator.randomize(0.42);
+        map_creator.randomize(0.42);
 
         var dig = function(x, y, value) {
           var p = xy(x, y);

@@ -17,7 +17,12 @@ define([
 
   var App = React.createClass({displayName: "App",
     getInitialState: function () {
-      return {};
+      return {
+        meta: {
+          engine: {}
+        },
+        entities: {}
+      };
     },
     dataChanged: function (data) {
       this.setState(data);
@@ -39,24 +44,32 @@ define([
     render: function () {
       return (
         React.createElement("div", null, 
-          React.createElement("label", null, 
-            React.createElement("input", {id: "change_speed_input", 
-                   name: "change_speed", 
-                   type: "range", 
-                   min: "10", 
-                   step: "10", 
-                   max: "1000", 
-                   defaultValue: 1000 - config.frame_interval, 
-                   onChange: this.getHandlerFor('change_speed')}), 
-            getHumanizedTime(), "%"
-          ), 
-          React.createElement("code", null, 
-            React.createElement("pre", null, JSON.stringify(this.state, null, 2))
-          )
+          React.createElement("div", null, "FPS: ", this.state.meta.fps), 
+          React.createElement("div", null, "Average FPS: ", this.state.meta.avg_fps), 
+          React.createElement("div", null, "Engine time: ", this.state.meta.engine.time), 
+
+          Object.keys(this.state.entities).map((function(key, index) {
+            return (
+              React.createElement("div", {key: index}, 
+                React.createElement("span", null, 
+                  this.state.entities[key].repr.glyph, "@", 
+                  this.state.entities[key].pos.x, ":", 
+                       this.state.entities[key].pos.y
+                ), 
+              React.createElement("span", null, " speed:", this.state.entities[key].speed.toFixed(2)), 
+              React.createElement("span", null, " moves:", this.state.entities[key].moved_count)
+              )
+            );
+          }).bind(this))
         )
       );
     }
   });
+
+  // <code>
+  //   <pre>{JSON.stringify(this.state, null, 2)}</pre>
+  // </code>
+
 
   React.render(React.createElement(App, null), document.getElementById('aux-view')); // jshint ignore:line
 

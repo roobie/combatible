@@ -17,7 +17,12 @@ define([
 
   var App = React.createClass({
     getInitialState: function () {
-      return {};
+      return {
+        meta: {
+          engine: {}
+        },
+        entities: {}
+      };
     },
     dataChanged: function (data) {
       this.setState(data);
@@ -39,24 +44,32 @@ define([
     render: function () {
       return (
         <div>
-          <label>
-            <input id="change_speed_input"
-                   name="change_speed"
-                   type="range"
-                   min="10"
-                   step="10"
-                   max="1000"
-                   defaultValue={1000 - config.frame_interval}
-                   onChange={this.getHandlerFor('change_speed')} />
-            {getHumanizedTime()}%
-          </label>
-          <code>
-            <pre>{JSON.stringify(this.state, null, 2)}</pre>
-          </code>
+          <div>FPS: {this.state.meta.fps}</div>
+          <div>Average FPS: {this.state.meta.avg_fps}</div>
+          <div>Engine time: {this.state.meta.engine.time}</div>
+
+          {Object.keys(this.state.entities).map((function(key, index) {
+            return (
+              <div key={index}>
+                <span>
+                  {this.state.entities[key].repr.glyph}@
+                  {this.state.entities[key].pos.x}:
+                       {this.state.entities[key].pos.y}
+                </span>
+              <span> speed:{this.state.entities[key].speed.toFixed(2)}</span>
+              <span> moves:{this.state.entities[key].moved_count}</span>
+              </div>
+            );
+          }).bind(this))}
         </div>
       );
     }
   });
+
+  // <code>
+  //   <pre>{JSON.stringify(this.state, null, 2)}</pre>
+  // </code>
+
 
   React.render(<App />, document.getElementById('aux-view')); // jshint ignore:line
 

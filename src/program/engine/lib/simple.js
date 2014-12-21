@@ -1,7 +1,9 @@
 define([
   'config',
-  'util/window'
-], function(config, window) {
+  'util/window',
+
+  'data/tracked_objects'
+], function(config, window, tracked_objects) {
   "use strict";
 
   var ROT = Object.create(null);
@@ -228,6 +230,7 @@ define([
       this._lock = 1;
 
       this._time = 0;
+      this._all_fps = [];
     }
 
     /**
@@ -237,6 +240,7 @@ define([
       // return this.unlock();
 
       window.requestAnimationFrame(this.unlock.bind(this));
+
       return this;
     };
 
@@ -248,6 +252,12 @@ define([
       return this;
     };
 
+    Engine.prototype.maybeEmptyAllFps = function maybeEmptyAllFps() {
+      if (this._all_fps.length > 600) {
+        this._all_fps = [];
+      }
+    };
+
     /**
      * Resume execution (paused by a previous lock)
      */
@@ -255,27 +265,39 @@ define([
       var progress = timestamp - this._time;
       this._time = timestamp;
 
-      // var time = this._scheduler.getTime();
-      // var fps = time / progress * 1000;
+      this.maybeEmptyAllFps();
+
+      var fps = 1000 / progress;
+      this._all_fps.push(fps);
+
+      tracked_objects.meta.fps = parseInt(fps);
+      tracked_objects.meta.avg_fps = parseInt(this._all_fps.reduce(function(a,b) {
+        return a + b;
+      }) / this._all_fps.length);
 
       var self = this;
       if (!this._lock) { throw new Error("Cannot unlock unlocked engine"); }
       this._lock--;
 
-      var actor = this._scheduler.next();
-      // no actors
-      if (!actor) { return this.lock(); }
+      // var batch_count = -this._scheduler._queue._events.length;
+      var batch_count = parseInt(this._scheduler._queue._events.length / 10);
 
-      var result = actor.act(function setDuration_bound(duration) {
-        self._scheduler.setDuration(duration);
-      });
+      for(var i = 0; i < batch_count; i++) {
+        var actor = this._scheduler.next();
+        // no actors
+        if (!actor) { return this.lock(); }
 
-      // actor returned a "thenable", looks like a Promise
+        var result = actor.act(function setDuration_bound(duration) {
+          self._scheduler.setDuration(duration);
+        });
+      }
+
       this.lock();
       if (result && result.then) {
-          result.then(function() {
-            window.requestAnimationFrame(self.unlock.bind(self));
-          });
+        // actor returned a "thenable", looks like a Promise
+        result.then(function() {
+          window.requestAnimationFrame(self.unlock.bind(self));
+        });
       } else {
         window.requestAnimationFrame(this.unlock.bind(this));
       }

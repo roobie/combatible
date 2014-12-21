@@ -31,6 +31,7 @@ define([
     calculate_duration: {
       value: function(base_duration) {
         return 1 / (base_duration * this.speed);
+        //return parseInt(1 / (base_duration * this.speed));
       }
     },
     act: {

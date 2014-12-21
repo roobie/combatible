@@ -32,10 +32,11 @@ define([
           return area.is_passable(xy(x, y));
         };
 
-        var dijkstra = new ROT.Path.Dijkstra(to.x, to.y, passable_fn);
+        //var path_finder = new ROT.Path.Dijkstra(to.x, to.y, passable_fn);
+        var path_finder = new ROT.Path.AStar(to.x, to.y, passable_fn);
 
         var path = [];
-        dijkstra.compute(from.x, from.y, function(x, y) {
+        path_finder.compute(from.x, from.y, function(x, y) {
           path.push(xy(x, y));
         });
 
@@ -80,6 +81,7 @@ define([
               return p;
             })();
             //ai.compute_observable_data(entity);
+            entity.moved_count = (entity.moved_count || 0) + 1;
             entity.move_to(next_pos);
           },
           base_duration: 1

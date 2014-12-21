@@ -62,6 +62,24 @@ define([
               }
             }
           })
+        },
+
+        tera: {
+          adult: getter.actor({
+            meta: [
+              {type: 'race_name', value: 'tera'},
+              {type: 'type', value: 'creature'}
+            ],
+            tracked: true,
+            blocking: false,
+            repr: {
+              glyph: 'T',
+              color: {
+                fg: 'springgreen',
+                bg: '#111'
+              }
+            }
+          })
         }
       }
     },
