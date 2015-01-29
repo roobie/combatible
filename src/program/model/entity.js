@@ -1,47 +1,70 @@
-define([
-  'lib/lodash',
-  'lib/radio',
-  'util/hash',
+var
+_ = require('lodash'),
+u = require('../utilities/all.js');
 
-  'engine/scheduler',
+var validate = function () {
+  return true;
+}
 
-  'data/tracked_objects'
-], function(_, radio, hash, scheduler, tracked_objects) {
+var skeletons = {
+  body: {
 
-  function Entity(properties) {
-    this.initialise(properties);
   }
+}
 
-  Object.defineProperties(Entity.prototype, {
-    initialise: {
-      value: function(properties) {
-        this.$hash = hash.get();
-        this.$created_time = scheduler.getTime();
+function Entity(props) {
+  this.init(props);
+}
 
-        _.assign(this, properties);
+_.assign(Entity, {
+  random: function () {
+    var rand = function () {
+      return 10 - (Math.random() * 7 | 0);
+    };
 
-        if (this.tracked) {
-          tracked_objects.entities[this.$hash] = this;
-          window.t = tracked_objects;
+    return new Entity({
+      ai: {
+        act: function () { }
+      },
+      body: {
+        get_effects: function () { }, // -> Array
+        stats: {
+          primary: [
+            'str',
+            'end',
+            'dex',
+            'agi'
+          ].reduce(function (out, next) {
+            out[next] = u.prop(rand());
+            return out;
+          }, {}),
+          secondary: {
+
+          }
+        }
+      },
+      soul: {
+        get_effects: function () { }, // -> Array
+        skills: {
+
         }
       }
-    },
-    age: {
-      get: function () {
-        return scheduler.getTime() - this.$created_time;
-      },
-      enumerable: true
-    },
-    move_to: {
-      value: function(to_pos) {
-        // this.parent_area.can(this).move_to(to_pos);
-        this.parent_area.reposition(this, to_pos);
-      }
-    },
-    toString: function () {
-      return this.constructor.name + '#{' + this.$hash + '}';
-    }
-  });
+    });
+  }
+});
 
-  return Entity;
+_.assign(Entity.prototype, {
+  init: function (props) {
+    var p = props;
+
+    validate(p);
+
+    _.assign(this, {
+      id: u.getter(getId()),
+      timestamp: u.getter(new Date().valueOf()),
+      body: u.prop(p.body),
+      soul: u.prop(p.soul),
+      ai: u.prop(p.ai)
+    })
+  }
 });

@@ -1,0 +1,21 @@
+{
+  "name": "combatible",
+  "version": "0.0.1",
+  "description": "fun stuff",
+  "main": "main.js",
+  "scripts": {
+    "test": "test.js"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "lodash": "^2.4.1",
+    "radio": "^0.2.0",
+    "react": "^0.12.2"
+  },
+  "devDependencies": {
+    "http-server": "^0.7.4",
+    "react-tools": "^0.12.2",
+    "requirejs": "^2.1.15"
+  }
+}

@@ -1,21 +1,33 @@
 {
-  "name": "combatible",
+  "name": "Combatible",
   "version": "0.0.1",
-  "description": "fun stuff",
-  "main": "main.js",
-  "scripts": {
-    "test": "test.js"
-  },
-  "author": "",
-  "license": "MIT",
+  "description": "an app",
+  "main": "src/program/main.js",
   "dependencies": {
-    "lodash": "^2.4.1",
-    "radio": "^0.2.0",
-    "react": "^0.12.2"
+    "lodash": "^3.0.0",
+    "mori": "^0.3.2"
   },
   "devDependencies": {
-    "http-server": "^0.7.4",
-    "react-tools": "^0.12.2",
-    "requirejs": "^2.1.15"
-  }
+    "browserify": "^8.1.1",
+    "envify": "^3.2.0",
+    "sparkler": "^0.3.5",
+    "sweetify": "^0.4.0",
+    "uglify-js": "^2.4.16",
+    "watchify": "^2.2.1"
+  },
+  "scripts": {
+    "start": "watchify -o dist/bundle.js -v -d .",
+    "build": "NODE_ENV=production browserify . | uglifyjs -cm > dist/bundle.min.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/roobie/combatible"
+  },
+  "browserify": {
+    "transform": [
+      "sweetify",
+      "envify"
+    ]
+  },
+  "author": "Björn Roberg"
 }
