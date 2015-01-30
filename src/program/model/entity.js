@@ -4,13 +4,7 @@ u = require('../utilities/all.js');
 
 var validate = function () {
   return true;
-}
-
-var skeletons = {
-  body: {
-
-  }
-}
+};
 
 function Entity(props) {
   this.init(props);
@@ -28,23 +22,40 @@ _.assign(Entity, {
       },
       body: {
         get_effects: function () { }, // -> Array
-        stats: {
-          primary: [
-            'str',
-            'end',
-            'dex',
-            'agi'
+        get_status: function () { }, // -> Object
+        anatomy: [
+          { type: 'head' },
+          { type: 'torso' },
+          { type: 'arm' },
+          { type: 'arm' },
+          { type: 'leg' },
+          { type: 'leg' },
+        ],
+        stats: (function () {
+          return [
+            'strength',
+            'endurance',
+            'dexterity',
+            'agility',
+            'memory',
+            'spirit',
           ].reduce(function (out, next) {
             out[next] = u.prop(rand());
             return out;
-          }, {}),
-          secondary: {
+          }, {
+            get_speed: function (status) {
+              var val = (((status.fatigue || 1) * this.endurance) +
+                         (this.strength / 2) +
+                         this.agility) | 0;
 
-          }
-        }
+              return Math.pow(val/100, -1);
+            }
+          });
+        }).call()
       },
       soul: {
         get_effects: function () { }, // -> Array
+        get_status: function () { }, // -> Object
         skills: {
 
         }
@@ -60,11 +71,13 @@ _.assign(Entity.prototype, {
     validate(p);
 
     _.assign(this, {
-      id: u.getter(getId()),
+      id: u.getter(u.getId()),
       timestamp: u.getter(new Date().valueOf()),
       body: u.prop(p.body),
       soul: u.prop(p.soul),
       ai: u.prop(p.ai)
-    })
+    });
   }
 });
+
+module.exports = Entity;
